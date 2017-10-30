@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Dispatcher<T> where T : System.IConvertible{
     public bool debug = false;
-    public Dispatcher(bool debug) {
+    public Dispatcher(bool debug = false) {
         this.debug = debug;
     }
 
