@@ -1,40 +1,90 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Dispatcher<T> where T : System.IConvertible{
-    public bool debug = false;
-    public Dispatcher(bool debug = false) {
-        this.debug = debug;
-    }
+namespace ImYellowFish.Utility
+{
 
-    public delegate void EventHandler(params object[] args);
+    /// <summary>
+    /// a basic event dispatcher
+    /// </summary>
+    public class Dispatcher<T> where T : System.IConvertible
+    {
+        public delegate void EventHandler(IEventMessage msg);
+        public bool debug = false;
+        private Dictionary<T, EventHandler> dict;
+        private List<T> history;
 
-    private Dictionary<object, EventHandler> dict = new Dictionary<object, EventHandler>();
+        /// <summary>
+        /// Construct a new dispatcher. To eliminate boxing for Enum types, pass in a comparer.
+        /// </summary>
+        public Dispatcher(bool debug = false, IEqualityComparer<T> comparer = null)
+        {
+            this.debug = debug;
+            if (comparer == null)
+            {
+                dict = new Dictionary<T, EventHandler>();
+            }
+            else
+            {
+                dict = new Dictionary<T, EventHandler>(comparer);
+            }
 
-    public void AddListener(T key, EventHandler handler) {
-        if (dict.ContainsKey(key)) {
-            dict[key] += handler;
-        } else {
-            dict.Add(key, handler);
+            if (debug)
+            {
+                history = new List<T>();
+            }
         }
-    }
 
-    public void RemoveListener(T key, EventHandler handler) {
-        if (dict.ContainsKey(key)) {
-            dict[key] -= handler;
-        } else {
-            throw new System.ArgumentException("Event to remove does not exist: " + key);  // TODO throw
-        }
-    }
-
-    public void Dispatch(T key, params object[] args) {
-        if (debug)
-            Debug.Log("dispatch event: " + key);
-
-        if (!dict.ContainsKey(key) || dict[key] == null) {
-            return;
+        public void AddListener(T key, EventHandler handler)
+        {
+            if (dict.ContainsKey(key))
+            {
+                dict[key] += handler;
+            }
+            else
+            {
+                dict.Add(key, handler);
+            }
         }
 
-        dict[key].Invoke(args);
+        public void RemoveListener(T key, EventHandler handler)
+        {
+            if (dict.ContainsKey(key))
+            {
+                dict[key] -= handler;
+            }
+            else
+            {
+                Debug.LogError("Event to remove does not exist: " + key);
+            }
+        }
+
+        public void RemoveAllListeners()
+        {
+            dict.Clear();
+        }
+
+        public void Dispatch(T key, IEventMessage msg)
+        {
+            if (!dict.ContainsKey(key) || dict[key] == null)
+            {
+                return;
+            }
+
+            dict[key].Invoke(msg);
+            if (debug)
+            {
+                Debug.Log("dispatch event: " + key);
+                history.Add(key);
+            }
+        }
+
+        /// <summary>
+        /// The history of all invoked events. Null if debug is disabled.
+        /// </summary>
+        public List<T> DebugEventHistory
+        {
+            get { return history; }
+        }
     }
 }
