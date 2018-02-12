@@ -3,6 +3,11 @@
 //
 
 using UnityEngine;
-public class ReadOnlyAttribute : PropertyAttribute {
 
+namespace ImYellowFish.Utility
+{
+    public class ReadOnlyAttribute : PropertyAttribute
+    {
+
+    }
 }
