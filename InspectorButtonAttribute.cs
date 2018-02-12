@@ -8,6 +8,7 @@ using UnityEditor;
 #endif
 using System.Reflection;
 
+namespace ImYellowFish.Utility {
 /// <summary>
 /// This attribute can only be applied to fields because its
 /// associated PropertyDrawer only operates on fields (either
@@ -17,21 +18,21 @@ using System.Reflection;
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class InspectorButtonAttribute : PropertyAttribute
 {
-  public static float kDefaultButtonWidth = 80;
+    public static float kDefaultButtonWidth = 80;
 
-  public readonly string MethodName;
+    public readonly string MethodName;
 
-  private float _buttonWidth = kDefaultButtonWidth;
-  public float ButtonWidth
-  {
-    get { return _buttonWidth; }
-    set { _buttonWidth = value; }
-  }
+    private float _buttonWidth = kDefaultButtonWidth;
+    public float ButtonWidth
+    {
+        get { return _buttonWidth; }
+        set { _buttonWidth = value; }
+    }
 
-  public InspectorButtonAttribute(string MethodName)
-  {
-    this.MethodName = MethodName;
-  }
+    public InspectorButtonAttribute(string MethodName)
+    {
+        this.MethodName = MethodName;
+    }
 }
 
 #if UNITY_EDITOR
@@ -60,3 +61,4 @@ public class InspectorButtonPropertyDrawer : PropertyDrawer
   }
 }
 #endif
+}
