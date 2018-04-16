@@ -1,0 +1,4 @@
+1. 把文件夹拖到Unity项目中
+2. 在摄像机上添加组件：HiResScreenShots
+3. 运行游戏，需要截图的时候按下键盘S键
+4. 截图会保存在Assets/screenshots目录下
